@@ -4,27 +4,10 @@ set -e
 
 # shellcheck disable=1004
 echo '
-  ________  ________  ________   ___      ___ ________  ________
-|\   ____\|\   __  \|\   ___  \|\  \    /  /|\   __  \|\   ____\
-\ \  \___|\ \  \|\  \ \  \\ \  \ \  \  /  / | \  \|\  \ \  \___|_
- \ \  \    \ \   __  \ \  \\ \  \ \  \/  / / \ \   __  \ \_____  \
-  \ \  \____\ \  \ \  \ \  \\ \  \ \    / /   \ \  \ \  \|____|\  \
-   \ \_______\ \__\ \__\ \__\\ \__\ \__/ /     \ \__\ \__\____\_\  \
-    \|_______|\|__|\|__|\|__| \|__|\|__|/       \|__|\|__|\_________\
-                                                         \|_________|
-
 Welcome! This script will guide you through the process of setting up a
-Canvas development environment with docker and dinghy/dory.
-
-When you git pull new changes, you can run ./scripts/docker_dev_update.sh
-to bring everything up to date.'
+Canvas development environment with docker.'
 
 OS="$(uname)"
-
-# Defaults
-DINGHY_MEMORY='8192'
-DINGHY_CPUS='4'
-DINGHY_DISK='150'
 
 function installed {
   type "$@" &> /dev/null
@@ -32,9 +15,6 @@ function installed {
 
 install='sudo apt-get update && sudo apt-get install -y'
 dependencies='docker-compose'
-
-BOLD="$(tput bold)"
-NORMAL="$(tput sgr0)"
 
 function message {
   echo ''
