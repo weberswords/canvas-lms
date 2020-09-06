@@ -11,4 +11,4 @@ jobs:
       - checkout
       - run:
           name: dev script
-          command: ./script/docker_dev_setup.sh
+          command: ./script/docker_dev_linux_setup.sh
