@@ -169,13 +169,13 @@ If you want to migrate the existing database, use docker_dev_update.sh
 
 function setup_canvas {
   message 'Now we can set up Canvas!'
-  copy_docker_config
+  # copy_docker_config
   build_images
 
   check_gemfile
-  docker-compose run --rm web ./script/canvas_update -n code -n data
+  # docker-compose run --rm web ./script/canvas_update -n code -n data
   create_db
-  docker-compose run --rm web ./script/canvas_update -n code -n deps
+  # docker-compose run --rm web ./script/canvas_update -n code -n deps
 }
 
 function display_next_steps {
