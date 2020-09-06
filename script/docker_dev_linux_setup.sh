@@ -18,17 +18,10 @@ dependencies='docker-compose'
 
 function message {
   echo ''
-  echo "$BOLD> $*$NORMAL"
 }
 
 function prompt {
   read -r -p "$1 " "$2"
-}
-
-function confirm_command {
-  prompt "OK to run '$*'? [y/n]" confirm
-  [[ ${confirm:-n} == 'y' ]] || return 1
-  eval "$*"
 }
 
 function install_dependencies {
@@ -48,10 +41,34 @@ function install_dependencies {
 
 function start_docker_daemon {
   service docker status &> /dev/null && return 0
-  prompt 'The docker daemon is not running. Start it? [y/n]' confirm
-  [[ ${confirm:-n} == 'y' ]] || return 1
   sudo service docker start
   sleep 1 # wait for docker daemon to start
+}
+
+function install_dory {
+  installed dory && return 0
+  message 'Installing dory...'
+
+  if ! installed gem; then
+    message "You need ruby to run dory (it's a gem). Install ruby and try again."
+    return 1
+  fi
+
+  prompt "Use sudo to install dory gem? You may need this if using system ruby [y/n]" use_sudo
+  if [[ ${use_sudo:-n} == 'y' ]]; then
+    eval "sudo gem install dory"
+  else
+    eval "gem install dory"
+  fi
+}
+
+function start_dory {
+  message 'Starting dory...'
+  if dory status | grep -q 'not running'; then
+    eval "dory up"
+  else
+    message 'Looks like dory is already running. Moving on...'
+  fi
 }
 
 function setup_docker_as_nonroot {
@@ -60,11 +77,11 @@ function setup_docker_as_nonroot {
 
   if ! id -Gn "$USER" | grep -q '\bdocker\b'; then
     message "Adding $USER user to docker group..."
-    confirm_command "sudo usermod -aG docker $USER" || true
+    eval "sudo usermod -aG docker $USER" || true
   fi
 
   message 'We need to login again to apply that change.'
-  confirm_command "exec sg docker -c $0"
+  eval "exec sg docker -c $0"
 }
 
 function setup_docker_environment {
@@ -86,7 +103,7 @@ function setup_docker_environment {
 
 function copy_docker_config {
   message 'Copying Canvas docker configuration...'
-  confirm_command 'cp docker-compose/config/* config/' || true
+  eval 'cp docker-compose/config/* config/' || true
 }
 
 function build_images {
@@ -100,7 +117,7 @@ function check_gemfile {
 'For historical reasons, the Canvas Gemfile.lock is not tracked by git. We may
 need to remove it before we can install gems, to prevent conflicting depencency
 errors.'
-    confirm_command 'rm Gemfile.lock' || true
+    eval 'rm Gemfile.lock' || true
   fi
 
   # Fixes 'error while trying to write to `/usr/src/app/Gemfile.lock`'
@@ -109,7 +126,7 @@ errors.'
 "The 'docker' user is not allowed to write to Gemfile.lock. We need write
 permissions so we can install gems."
     touch Gemfile.lock
-    confirm_command 'chmod a+rw Gemfile.lock' || true
+    eval 'chmod a+rw Gemfile.lock' || true
   fi
 }
 
@@ -124,7 +141,7 @@ function create_db {
 "The 'docker' user is not allowed to write to db/structure.sql. We need write
 permissions so we can run migrations."
     touch db/structure.sql
-    confirm_command 'chmod a+rw db/structure.sql' || true
+    eval 'chmod a+rw db/structure.sql' || true
   fi
 
   if database_exists; then
