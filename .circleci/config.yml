@@ -9,4 +9,6 @@ jobs:
     executor: ruby/default
     steps:
       - checkout
-      
+      - run:
+          name: dev script
+          command: ./script/docker_dev_setup.sh
