@@ -215,6 +215,6 @@ function display_next_steps {
   "
 }
 
-setup_docker_environment
+#setup_docker_environment
 setup_canvas
 display_next_steps
