@@ -65,7 +65,7 @@
     "grunt-cli": "1.2.0",
     "lodash": "4.17.20",
     "parse-decimal-number": "1.0.0",
-    "requirejs": "~2.2.0",
+    "requirejs": "~2.3.6",
     "react-tools": "0.11.2",
     "shelljs": "0.7.0"
   }
